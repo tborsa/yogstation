@@ -163,19 +163,9 @@
 		var/delta_lumcount = Clamp(center_strength * (range - distance) / range, 0, LIGHTING_CAP)
 
 		if(delta_lumcount > 0)
-
-			var/max_col = max(r,g,b)
-			var/addR = 0
-			var/addG = 0
-			var/addB = 0
-			if(max_col<=0) // Because Dividing by 0 will crash us. And I don't trust user input.
-				addR = 1/3
-				addG = 1/3
-				addB = 1/3
-			else
-				addR = r/max_col
-				addG = g/max_col
-				addB = b/max_col
+			var/addR = r
+			var/addG = g
+			var/addB = b
 
 
 			addR *= delta_lumcount
@@ -250,9 +240,14 @@
 /atom/proc/SetLightColor(col)
 	if (!light)
 		light = new(src)
-	light.r = hex2num(copytext(col,2,4))
-	light.g = hex2num(copytext(col,4,6))
-	light.b = hex2num(copytext(col,6,0))
+	if(col==null || length(col)<7)
+		light.r = 1
+		light.g = 1
+		light.b = 1
+	else
+		light.r = hex2num(copytext(col,2,4))/255
+		light.g = hex2num(copytext(col,4,6))/255
+		light.b = hex2num(copytext(col,6,0))/255
 	light.changed()
 
 /atom/proc/AddLuminosity(delta_luminosity)

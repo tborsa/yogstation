@@ -348,21 +348,23 @@ datum/species/lizard/before_equip_job(datum/job/J, mob/living/carbon/human/H)
 						H.heal_overall_damage(0.2, 0.2)
 						return
 
-			if (T.get_lumcount() || H.dna.features["mcolor"]=="000") // if they're black, how will they eat light..? Also saves doing the div/0 check.
-				var/R = hex2num(copytext(H.dna.features["mcolor"],1,2))
-				var/G = hex2num(copytext(H.dna.features["mcolor"],2,3))
-				var/B = hex2num(copytext(H.dna.features["mcolor"],3,0))
+			if (T.get_lumcount() || H.dna.features["mcolor"]=="FFF") // if they're white, how will they eat light..? Also saves doing the div/0 check.
+				var/R = 255-hex2num(copytext(H.dna.features["mcolor"],1,2)) // 255- because we need the INVERSE.Green plants don't eat green. EZPZ.
+				var/G = 255-hex2num(copytext(H.dna.features["mcolor"],2,3))
+				var/B = 255-hex2num(copytext(H.dna.features["mcolor"],3,0))
 
 				var/max_col = max(R,G,B)
 				R /= max_col
 				G /= max_col
 				B /= max_col
 
+
+
 				var/food_R = T.r_lumcount * R
 				var/food_G = T.g_lumcount * G
 				var/food_B = T.b_lumcount * B
 
-				var/light_exposed = (food_R + food_G + food_B) * 3 // Because of the fact that it uses their 'colour', not their value or saturation, they will always be limited to a third of the food they used to. So we multiply it by three.
+				var/light_exposed = (food_R + food_G + food_B) // This used to mult by 3, but now lights don't use fake h/s/v, so they should get enough value...
 
 				switch (light_exposed)
 					if (-INFINITY to 0.1)

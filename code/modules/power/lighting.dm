@@ -135,7 +135,6 @@
 	use_power = 2
 	idle_power_usage = 2
 	active_power_usage = 20
-	power_channel = LIGHT //Lights are calc'd via area so they dont need to be in the machine list
 	var/on = 0					// 1 if on, 0 if off
 	var/on_gs = 0
 	var/static_power_used = 0
@@ -219,8 +218,6 @@
 
 // update the icon_state and luminosity of the light depending on its state
 /obj/machinery/light/proc/update(trigger = 1)
-
-	SetLightColor(color)
 	update_icon()
 	if(on)
 		if(!light || light.luminosity != brightness)
@@ -249,7 +246,7 @@
 			addStaticPower(static_power_used, STATIC_LIGHT)
 		else
 			removeStaticPower(static_power_used, STATIC_LIGHT)
-
+	SetLightColor(color)
 
 // attempt to set the light's on/off status
 // will not switch on if broken/burned/empty
@@ -278,6 +275,10 @@
 
 	if(istype(W, /obj/item/toy/crayon))
 		var/obj/item/toy/crayon/can = W
+		if(istype(W,/obj/item/toy/crayon/spraycan))
+			var/obj/item/toy/crayon/spraycan/spray = can
+			if(spray.is_capped)
+				return
 		color = can.paint_color
 		update()
 		return
